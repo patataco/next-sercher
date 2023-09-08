@@ -5,14 +5,14 @@ export interface Sick {
   sickNm: string;
 }
 
-export const searchHistoryAtom = atom<Array<string>>({
+export const searchHistoryAtom = atom<Array<string> | null>({
   key: 'searchHistoryAtom',
-  default: [],
+  default: null,
 });
 
-export const apiResponseAtom = atom<Sick[]>({
+export const apiResponseAtom = atom<Sick[] | null>({
   key: 'apiResponseAtom',
-  default: [],
+  default: null,
 });
 
 export const searchKeywordAtom = atom<string>({
@@ -28,4 +28,19 @@ export const modalStatusAtom = atom<boolean>({
 export const indexAtom = atom<number>({
   key: 'indexAtom',
   default: -1,
+});
+
+export const exposedKeywordAtom = atom<string>({
+  key: 'exposedKeywordAtom',
+  default: '',
+});
+
+export const loadingAtom = atom<boolean>({
+  key: 'loadingAtom',
+  default: false,
+});
+
+export const initializingAtom = atom<boolean>({
+  key: 'initializingAtom',
+  default: true,
 });

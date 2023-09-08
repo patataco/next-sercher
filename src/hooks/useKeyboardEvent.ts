@@ -3,6 +3,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import {
   apiResponseAtom,
+  exposedKeywordAtom,
   indexAtom,
   modalStatusAtom,
   searchHistoryAtom,
@@ -11,9 +12,11 @@ import {
 
 const useKeyboardEvent = () => {
   const [query, setQuery] = useRecoilState(searchKeywordAtom);
+  const [exposedKeyword, setExposedKeyword] =
+    useRecoilState(exposedKeywordAtom);
   const results = useRecoilValue(apiResponseAtom);
   const searchHistoryList = useRecoilValue(searchHistoryAtom);
-  const setIndex = useSetRecoilState(indexAtom);
+  const [index, setIndex] = useRecoilState(indexAtom);
   const setIsOpen = useSetRecoilState(modalStatusAtom);
 
   useEffect(() => {
@@ -22,10 +25,13 @@ const useKeyboardEvent = () => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
     const getListMaxLength = () => {
-      if (query.length > 0) {
+      if (query.length > 0 && results) {
         return Math.min(results.length, 7);
       }
-      return Math.min(searchHistoryList.length, 7);
+      if (query.length < 0 && searchHistoryList) {
+        return Math.min(searchHistoryList.length, 7);
+      }
+      return 7;
     };
 
     const maxLength = getListMaxLength();
@@ -34,18 +40,42 @@ const useKeyboardEvent = () => {
       case 'ArrowDown':
         e.preventDefault();
         setIndex((prev) => (prev + 1) % maxLength);
+        if (query.length > 0) {
+          if (results) {
+            const keyword = results[(index + 1) % maxLength].sickNm;
+            setExposedKeyword(keyword);
+          }
+        } else {
+          if (searchHistoryList) {
+            const reverseArray = [...searchHistoryList].reverse();
+            const keyword = reverseArray[(index + 1) % maxLength];
+            setExposedKeyword(keyword);
+          }
+        }
         break;
 
       case 'ArrowUp':
         e.preventDefault();
         setIndex((prev) => (prev - 1 + maxLength) % maxLength);
+        if (query.length > 0) {
+          if (results) {
+            const keyword = results[(index - 1) % maxLength].sickNm;
+            setExposedKeyword(keyword);
+          }
+        } else {
+          if (searchHistoryList) {
+            const reverseArray = [...searchHistoryList].reverse();
+            const keyword = reverseArray[(index - 1) % maxLength];
+            setExposedKeyword(keyword);
+          }
+        }
         break;
 
       case 'Escape':
         e.preventDefault();
         setIndex(-1);
-        setIsOpen(false);
         setQuery('');
+        setExposedKeyword('');
         break;
 
       default:

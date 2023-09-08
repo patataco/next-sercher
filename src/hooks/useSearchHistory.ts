@@ -24,14 +24,9 @@ const useSearchHistory = (): SearchHistory => {
     const savedWords = localStorage.getItem('savedWord');
     if (savedWords) {
       const savedWordsArray: string[] = JSON.parse(savedWords);
-
-      const isDuplicated = savedWordsArray.includes(word);
-      if (!isDuplicated) {
-        const updatedWordArray = [...savedWordsArray, word];
-        localStorage.setItem('savedWord', JSON.stringify(updatedWordArray));
-        setSearchedWords(updatedWordArray);
-      }
-      return;
+      const updatedWordArray = [...savedWordsArray, word];
+      localStorage.setItem('savedWord', JSON.stringify(updatedWordArray));
+      setSearchedWords(updatedWordArray);
     } else {
       const wordArray = [word];
       localStorage.setItem('savedWord', JSON.stringify(wordArray));
