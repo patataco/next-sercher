@@ -3,9 +3,9 @@ import { useRecoilState } from 'recoil';
 import { searchHistoryAtom } from '@/recoil/atom';
 
 interface SearchHistory {
-  getWordInLocalStorage: () => string[];
+  getWordInLocalStorage: () => void;
   setWordInLocalStorage: (word: string) => void;
-  searchedWords: string[];
+  searchedWords: string[] | null;
   deleteWordInLocalStorage: (word: string) => void;
 }
 
@@ -16,30 +16,34 @@ const useSearchHistory = (): SearchHistory => {
     if (savedWords) {
       const savedWordsArray: string[] = JSON.parse(savedWords);
       setSearchedWords(savedWordsArray);
-    }
-    return [];
+    } else setSearchedWords([]);
   };
 
   const setWordInLocalStorage = (word: string) => {
     const savedWords = localStorage.getItem('savedWord');
+    let updatedWordArray: string[] = [];
+
     if (savedWords) {
       const savedWordsArray: string[] = JSON.parse(savedWords);
-      const updatedWordArray = [...savedWordsArray, word];
-      localStorage.setItem('savedWord', JSON.stringify(updatedWordArray));
-      setSearchedWords(updatedWordArray);
+      updatedWordArray = [...savedWordsArray, word];
+
+      while (updatedWordArray.length > 30) {
+        updatedWordArray.shift();
+      }
     } else {
-      const wordArray = [word];
-      localStorage.setItem('savedWord', JSON.stringify(wordArray));
-      setSearchedWords(wordArray);
+      updatedWordArray = [word];
     }
+
+    localStorage.setItem('savedWord', JSON.stringify(updatedWordArray));
+    setSearchedWords(updatedWordArray);
   };
 
   const deleteWordInLocalStorage = (word: string) => {
-    const updatedWordArray = searchedWords.filter((item) => {
-      return item !== word;
-    });
-    localStorage.setItem('savedWord', JSON.stringify(updatedWordArray));
-    setSearchedWords(updatedWordArray);
+    if (searchedWords) {
+      const updatedWordArray = searchedWords.filter((item) => item !== word);
+      localStorage.setItem('savedWord', JSON.stringify(updatedWordArray));
+      setSearchedWords(updatedWordArray);
+    }
   };
 
   return {

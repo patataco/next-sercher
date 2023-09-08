@@ -39,7 +39,7 @@ const SearchBar = () => {
     if (debouncedQuery) {
       fetchSickList();
     } else {
-      setResults([]); // 검색어가 비어 있을 경우 결과를 빈 배열로 설정
+      setResults([]);
     }
   }, [debouncedQuery]);
 
