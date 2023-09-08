@@ -61,13 +61,13 @@ const useKeyboardEvent = () => {
           if (results) {
             const keyword = results[(index - 1) % maxLength].sickNm;
             setExposedKeyword(keyword);
-          }
+          } else return;
         } else {
           if (searchHistoryList) {
             const reverseArray = [...searchHistoryList].reverse();
             const keyword = reverseArray[(index - 1) % maxLength];
             setExposedKeyword(keyword);
-          }
+          } else return;
         }
         break;
 
