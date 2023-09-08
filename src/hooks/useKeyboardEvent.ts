@@ -12,8 +12,7 @@ import {
 
 const useKeyboardEvent = () => {
   const [query, setQuery] = useRecoilState(searchKeywordAtom);
-  const [exposedKeyword, setExposedKeyword] =
-    useRecoilState(exposedKeywordAtom);
+  const setExposedKeyword = useSetRecoilState(exposedKeywordAtom);
   const results = useRecoilValue(apiResponseAtom);
   const searchHistoryList = useRecoilValue(searchHistoryAtom);
   const [index, setIndex] = useRecoilState(indexAtom);
@@ -21,7 +20,7 @@ const useKeyboardEvent = () => {
 
   useEffect(() => {
     setIndex(-1);
-  }, [query]);
+  }, [query, setIndex]);
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
     const getListMaxLength = () => {
